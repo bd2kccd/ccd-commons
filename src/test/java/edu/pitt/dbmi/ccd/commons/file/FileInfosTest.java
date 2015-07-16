@@ -18,9 +18,14 @@
  */
 package edu.pitt.dbmi.ccd.commons.file;
 
+import edu.pitt.dbmi.ccd.commons.file.info.AdvancedFileInfo;
+import edu.pitt.dbmi.ccd.commons.file.info.BasicFileInfo;
+import edu.pitt.dbmi.ccd.commons.file.info.FileInfos;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -36,13 +41,36 @@ public class FileInfosTest {
 
     /**
      * Test of getDirectoryBasicInfos method, of class FileInfos.
+     *
+     * @throws IOException
      */
+    @Ignore
     @Test
-    public void testGetDirectoryBasicInfos() {
+    public void testGetDirectoryBasicInfos() throws IOException {
         System.out.println("getDirectoryBasicInfos");
         Path dir = Paths.get(".");
         List<BasicFileInfo> result = FileInfos.getDirectoryBasicInfos(dir, true);
-        result.stream().forEach(System.out::println);
+        result.stream().forEach(info -> {
+            System.out.println(info);
+            System.out.println();
+        });
+    }
+
+    /**
+     * Test of getDirectoryAdvancedInfos method, of class FileInfos.
+     *
+     * @throws IOException
+     */
+    @Ignore
+    @Test
+    public void testGetDirectoryAdvancedInfos() throws IOException {
+        System.out.println("getDirectoryAdvancedInfos");
+        Path dir = Paths.get(".");
+        List<AdvancedFileInfo> result = FileInfos.getDirectoryAdvancedInfos(dir, true);
+        result.stream().forEach(info -> {
+            System.out.println(info);
+            System.out.println();
+        });
     }
 
 }

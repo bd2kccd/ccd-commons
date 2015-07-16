@@ -24,18 +24,20 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
-import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 /**
  *
- * Jul 15, 2015 12:46:19 PM
+ * Jul 16, 2015 12:55:43 PM
  *
  * @author Kevin V. Bui (kvb2@pitt.edu)
  */
-public class MessageDigestHashTest {
+public class FilePrintTest {
+
+    @Rule
+    public TemporaryFolder tempFolder = new TemporaryFolder();
 
     /**
      * Generated 5 paragraphs, 493 words, 3366 bytes of Lorem Ipsum.
@@ -48,27 +50,47 @@ public class MessageDigestHashTest {
         "Quisque quis sem vitae nunc egestas eleifend commodo lacinia elit. Nunc at tincidunt arcu. Quisque pharetra ex orci, ac porttitor odio consectetur fringilla. Sed eget nulla a magna pharetra tempor. Morbi gravida justo nec libero malesuada, porta rhoncus leo rutrum. Sed tempor placerat lorem, non rutrum quam suscipit sed. Etiam feugiat nisi non quam condimentum aliquam. Nulla laoreet est a sem tempus, a pharetra nunc gravida. Sed ut porttitor dolor. Proin vel porta sapien, sed eleifend tellus. Donec mauris magna, tincidunt ac turpis sed, vehicula pulvinar enim. Aenean dapibus, quam et cursus molestie, nisi massa dapibus sem, sed congue felis enim sed turpis."
     };
 
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
-
-    public MessageDigestHashTest() {
+    public FilePrintTest() {
     }
 
     /**
-     * Test of computeMD5Hash method, of class MessageDigestHash.
+     * Test of unixFileDateTime method, of class FilePrint.
      *
      * @throws IOException
      */
     @Test
-    public void testComputeMD5Hash() throws IOException {
-        System.out.println("computeMD5Hash");
+    public void testFileTimestamp() throws IOException {
+        System.out.println();
+        System.out.println("fileTimestamp");
 
         Path file = tempFolder.newFile("test.txt").toPath();
         Files.write(file, Arrays.asList(FILE_CONTENTS), StandardCharsets.UTF_8, StandardOpenOption.CREATE);
 
-        String expResult = "876fc30c029dab527b6fc1d2ae5932fd";
-        String result = MessageDigestHash.computeMD5Hash(file);
-        Assert.assertEquals(expResult, result);
+        long lastModifiedTime = Files.getLastModifiedTime(file).toMillis();
+        String result = FilePrint.fileTimestamp(lastModifiedTime);
+        System.out.printf("File Timestamp: %s\n", result);
+
+        System.out.println();
+    }
+
+    /**
+     * Test of humanReadableSize method, of class FilePrint.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testHumanReadableSize() throws IOException {
+        System.out.println();
+        System.out.println("humanReadableSize");
+
+        Path file = tempFolder.newFile("test.txt").toPath();
+        Files.write(file, Arrays.asList(FILE_CONTENTS), StandardCharsets.UTF_8, StandardOpenOption.CREATE);
+
+        long fileSize = Files.size(file);
+        String result = FilePrint.humanReadableSize(fileSize, false);
+        System.out.printf("Raw File Size: %d\n", fileSize);
+        System.out.printf("Print Pretty File Size: %s\n", result);
+        System.out.println();
     }
 
 }

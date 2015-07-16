@@ -25,8 +25,6 @@ import java.nio.file.Path;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -35,8 +33,6 @@ import org.slf4j.LoggerFactory;
  * @author Kevin V. Bui (kvb2@pitt.edu)
  */
 public class MessageDigestHash {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(MessageDigestHash.class);
 
     private static final String MD5_ALGORITHM = "MD5";
 
@@ -61,9 +57,7 @@ public class MessageDigestHash {
             }
             hash = sb.toString();
         } catch (NoSuchAlgorithmException exception) {
-            LOGGER.error(
-                    String.format("Unable to compute MD5 hash for file '%s'.", file.getFileName().toString()),
-                    exception);
+            exception.printStackTrace(System.err);  // this should not happen
         }
 
         return hash;

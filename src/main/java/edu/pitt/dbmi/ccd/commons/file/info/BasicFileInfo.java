@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package edu.pitt.dbmi.ccd.commons.file;
+package edu.pitt.dbmi.ccd.commons.file.info;
 
 import java.nio.file.Path;
 
@@ -28,27 +28,27 @@ import java.nio.file.Path;
  */
 public class BasicFileInfo {
 
-    private final String filename;
+    protected final String filename;
 
-    private final Path absolutePath;
+    protected final Path absolutePath;
 
-    private final long creationTime;
+    protected final long creationTime;
 
-    private final long lastAccessTime;
+    protected final long lastAccessTime;
 
-    private final long lastModifiedTime;
+    protected final long lastModifiedTime;
 
-    private final long size;
+    protected final long size;
 
-    private final boolean directory;
+    protected final boolean directory;
 
-    private final boolean regularFile;
+    protected final boolean regularFile;
 
-    private final boolean symbolicLink;
+    protected final boolean symbolicLink;
 
-    public BasicFileInfo(String filename, Path absolutePath, long creationTime,
-            long lastAccessTime, long lastModifiedTime, long size,
-            boolean directory, boolean regularFile, boolean symbolicLink) {
+    protected final boolean hidden;
+
+    public BasicFileInfo(String filename, Path absolutePath, long creationTime, long lastAccessTime, long lastModifiedTime, long size, boolean directory, boolean regularFile, boolean symbolicLink, boolean hidden) {
         this.filename = filename;
         this.absolutePath = absolutePath;
         this.creationTime = creationTime;
@@ -58,11 +58,13 @@ public class BasicFileInfo {
         this.directory = directory;
         this.regularFile = regularFile;
         this.symbolicLink = symbolicLink;
+        this.hidden = hidden;
     }
 
     @Override
     public String toString() {
-        return "BasicFileInfo{" + "filename=" + filename
+        return "BasicFileInfo{"
+                + "filename=" + filename
                 + ", absolutePath=" + absolutePath
                 + ", creationTime=" + creationTime
                 + ", lastAccessTime=" + lastAccessTime
@@ -70,7 +72,9 @@ public class BasicFileInfo {
                 + ", size=" + size
                 + ", directory=" + directory
                 + ", regularFile=" + regularFile
-                + ", symbolicLink=" + symbolicLink + '}';
+                + ", symbolicLink=" + symbolicLink
+                + ", hidden=" + hidden
+                + '}';
     }
 
     public String getFilename() {
@@ -107,6 +111,10 @@ public class BasicFileInfo {
 
     public boolean isSymbolicLink() {
         return symbolicLink;
+    }
+
+    public boolean isHidden() {
+        return hidden;
     }
 
 }
