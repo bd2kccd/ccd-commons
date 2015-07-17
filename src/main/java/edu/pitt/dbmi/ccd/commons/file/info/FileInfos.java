@@ -37,6 +37,23 @@ public class FileInfos {
     private FileInfos() {
     }
 
+    public static BasicFileInfo basicPathInfo(Path path) throws IOException {
+        BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
+        BasicFileInfo info = new BasicFileInfo(
+                path.getFileName().toString(),
+                path.getParent().toRealPath(),
+                attrs.creationTime().toMillis(),
+                attrs.lastAccessTime().toMillis(),
+                attrs.lastModifiedTime().toMillis(),
+                attrs.size(),
+                attrs.isDirectory(),
+                attrs.isRegularFile(),
+                attrs.isSymbolicLink(),
+                Files.isHidden(path));
+
+        return info;
+    }
+
     public static List<BasicFileInfo> listBasicPathInfo(List<Path> pathList) throws IOException {
         List<BasicFileInfo> list = new LinkedList<>();
 

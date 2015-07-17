@@ -40,6 +40,17 @@ public class FileInfosTest extends AbstractFileTest {
     public FileInfosTest() {
     }
 
+    @Test
+    public void testBasicFileInfo() throws IOException {
+        System.out.println("basicPathInfo");
+
+        Path file = tempFolder.newFile("test.txt").toPath();
+        Files.write(file, Arrays.asList(FILE_CONTENTS), StandardCharsets.UTF_8, StandardOpenOption.CREATE);
+
+        BasicFileInfo info = FileInfos.basicPathInfo(file);
+        Assert.assertNotNull(info);
+    }
+
     /**
      * Test of getBasicInfos method, of class FileInfos.
      *
@@ -47,7 +58,7 @@ public class FileInfosTest extends AbstractFileTest {
      */
     @Test
     public void testGetBasicInfos() throws IOException {
-        System.out.println("getBasicInfos");
+        System.out.println("listBasicPathInfo");
 
         Path file = tempFolder.newFile("test.txt").toPath();
         Files.write(file, Arrays.asList(FILE_CONTENTS), StandardCharsets.UTF_8, StandardOpenOption.CREATE);
