@@ -18,10 +18,15 @@
  */
 package edu.pitt.dbmi.ccd.commons.file.info;
 
+import edu.pitt.dbmi.ccd.commons.file.AbstractFileTest;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
 import java.util.List;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -30,69 +35,57 @@ import org.junit.Test;
  *
  * @author Kevin V. Bui (kvb2@pitt.edu)
  */
-public class FileInfosTest {
+public class FileInfosTest extends AbstractFileTest {
 
     public FileInfosTest() {
     }
 
     /**
-     * Test of getAdvancedInfos method, of class FileInfos.
-     */
-    @Test
-    public void testGetAdvancedInfos() throws IOException {
-        System.out.println();
-        System.out.println("getAdvancedInfos");
-
-        Path dir = Paths.get(".");
-        boolean showHidden = false;
-        List<Path> files = FileInfos.getDirectoryListing(dir, showHidden);
-
-        List<AdvancedFileInfo> result = FileInfos.getAdvancedInfos(files);
-        result.forEach(info -> {
-            System.out.println(info);
-            System.out.println();
-        });
-
-        System.out.println();
-    }
-
-    /**
      * Test of getBasicInfos method, of class FileInfos.
+     *
+     * @throws IOException
      */
     @Test
     public void testGetBasicInfos() throws IOException {
-        System.out.println();
         System.out.println("getBasicInfos");
 
-        Path dir = Paths.get(".");
-        boolean showHidden = false;
-        List<Path> files = FileInfos.getDirectoryListing(dir, showHidden);
+        Path file = tempFolder.newFile("test.txt").toPath();
+        Files.write(file, Arrays.asList(FILE_CONTENTS), StandardCharsets.UTF_8, StandardOpenOption.CREATE);
 
-        List<BasicFileInfo> result = FileInfos.getBasicInfos(files);
-        result.forEach(info -> {
-            System.out.println(info);
-            System.out.println();
-        });
+        Path hiddenFile = tempFolder.newFile(".test_hidden.txt").toPath();
+        Files.write(hiddenFile, Arrays.asList(FILE_CONTENTS), StandardCharsets.UTF_8, StandardOpenOption.CREATE);
 
-        System.out.println();
+        Path folder = tempFolder.newFolder("test_folder").toPath();
+
+        Path dir = tempFolder.getRoot().toPath();
+        boolean showHidden = true;
+        List<Path> pathList = FileInfos.listDirectory(dir, showHidden);
+
+        List<BasicFileInfo> result = FileInfos.listBasicPathInfo(pathList);
+        Assert.assertTrue(!result.isEmpty());
     }
 
     /**
      * Test of getDirectoryListing method, of class FileInfos.
+     *
+     * @throws IOException
      */
     @Test
-    public void testGetDirectoryListing() throws IOException {
-        System.out.println();
-        System.out.println("getDirectoryListing");
+    public void testListDirectory() throws IOException {
+        System.out.println("listDirectory");
 
-        Path dir = Paths.get(".");
-        boolean showHidden = false;
-        List<Path> result = FileInfos.getDirectoryListing(dir, showHidden);
-        result.forEach(path -> {
-            System.out.println(path.getFileName());
-        });
+        Path file = tempFolder.newFile("test.txt").toPath();
+        Files.write(file, Arrays.asList(FILE_CONTENTS), StandardCharsets.UTF_8, StandardOpenOption.CREATE);
 
-        System.out.println();
+        Path hiddenFile = tempFolder.newFile(".test_hidden.txt").toPath();
+        Files.write(hiddenFile, Arrays.asList(FILE_CONTENTS), StandardCharsets.UTF_8, StandardOpenOption.CREATE);
+
+        tempFolder.newFolder("test_folder");
+
+        Path dir = tempFolder.getRoot().toPath();
+        boolean showHidden = true;
+        List<Path> result = FileInfos.listDirectory(dir, showHidden);
+        Assert.assertTrue(!result.isEmpty());
     }
 
 }

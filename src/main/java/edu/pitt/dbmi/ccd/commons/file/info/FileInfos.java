@@ -18,7 +18,6 @@
  */
 package edu.pitt.dbmi.ccd.commons.file.info;
 
-import edu.pitt.dbmi.ccd.commons.file.MessageDigestHash;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -38,33 +37,10 @@ public class FileInfos {
     private FileInfos() {
     }
 
-    public static List<AdvancedFileInfo> getAdvancedInfos(List<Path> files) throws IOException {
-        List<AdvancedFileInfo> list = new LinkedList<>();
-
-        for (Path path : files) {
-            BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
-            list.add(
-                    new AdvancedFileInfo(
-                            attrs.isRegularFile() ? MessageDigestHash.computeMD5Hash(path) : "",
-                            path.getFileName().toString(),
-                            path.getParent().toRealPath(),
-                            attrs.creationTime().toMillis(),
-                            attrs.lastAccessTime().toMillis(),
-                            attrs.lastModifiedTime().toMillis(),
-                            attrs.size(),
-                            attrs.isDirectory(),
-                            attrs.isRegularFile(),
-                            attrs.isSymbolicLink(),
-                            Files.isHidden(path)));
-        }
-
-        return list;
-    }
-
-    public static List<BasicFileInfo> getBasicInfos(List<Path> files) throws IOException {
+    public static List<BasicFileInfo> listBasicPathInfo(List<Path> pathList) throws IOException {
         List<BasicFileInfo> list = new LinkedList<>();
 
-        for (Path path : files) {
+        for (Path path : pathList) {
             BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
             list.add(
                     new BasicFileInfo(
@@ -83,7 +59,7 @@ public class FileInfos {
         return list;
     }
 
-    public static List<Path> getDirectoryListing(Path dir, boolean showHidden) throws IOException {
+    public static List<Path> listDirectory(Path dir, boolean showHidden) throws IOException {
         List<Path> list = new LinkedList<>();
 
         if (showHidden) {
