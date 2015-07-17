@@ -38,94 +38,63 @@ public class FileInfos {
     private FileInfos() {
     }
 
-    public static List<AdvancedFileInfo> getDirectoryAdvancedInfos(Path dir, boolean showHidden) throws IOException {
-        if (!Files.isDirectory(dir)) {
-            throw new IllegalArgumentException(
-                    String.format("'%s' is not a directory.", dir.getFileName().toString()));
-        }
-
+    public static List<AdvancedFileInfo> getAdvancedInfos(List<Path> files) throws IOException {
         List<AdvancedFileInfo> list = new LinkedList<>();
-        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(dir)) {
-            for (Path path : directoryStream) {
-                if (Files.isHidden(path)) {
-                    if (showHidden) {
-                        BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
-                        list.add(
-                                new AdvancedFileInfo(
-                                        MessageDigestHash.computeMD5Hash(path),
-                                        path.getFileName().toString(),
-                                        path.getParent().toRealPath(),
-                                        attrs.creationTime().toMillis(),
-                                        attrs.lastAccessTime().toMillis(),
-                                        attrs.lastModifiedTime().toMillis(),
-                                        attrs.size(),
-                                        attrs.isDirectory(),
-                                        attrs.isRegularFile(),
-                                        attrs.isSymbolicLink(),
-                                        true));
-                    }
-                } else {
-                    BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
-                    list.add(
-                            new AdvancedFileInfo(
-                                    MessageDigestHash.computeMD5Hash(path),
-                                    path.getFileName().toString(),
-                                    path.getParent().toRealPath(),
-                                    attrs.creationTime().toMillis(),
-                                    attrs.lastAccessTime().toMillis(),
-                                    attrs.lastModifiedTime().toMillis(),
-                                    attrs.size(),
-                                    attrs.isDirectory(),
-                                    attrs.isRegularFile(),
-                                    attrs.isSymbolicLink(),
-                                    false));
-                }
-            }
+
+        for (Path path : files) {
+            BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
+            list.add(
+                    new AdvancedFileInfo(
+                            attrs.isRegularFile() ? MessageDigestHash.computeMD5Hash(path) : "",
+                            path.getFileName().toString(),
+                            path.getParent().toRealPath(),
+                            attrs.creationTime().toMillis(),
+                            attrs.lastAccessTime().toMillis(),
+                            attrs.lastModifiedTime().toMillis(),
+                            attrs.size(),
+                            attrs.isDirectory(),
+                            attrs.isRegularFile(),
+                            attrs.isSymbolicLink(),
+                            Files.isHidden(path)));
         }
 
         return list;
     }
 
-    public static List<BasicFileInfo> getDirectoryBasicInfos(Path dir, boolean showHidden) throws IOException {
-        if (!Files.isDirectory(dir)) {
-            throw new IllegalArgumentException(
-                    String.format("'%s' is not a directory.", dir.getFileName().toString()));
+    public static List<BasicFileInfo> getBasicInfos(List<Path> files) throws IOException {
+        List<BasicFileInfo> list = new LinkedList<>();
+
+        for (Path path : files) {
+            BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
+            list.add(
+                    new BasicFileInfo(
+                            path.getFileName().toString(),
+                            path.getParent().toRealPath(),
+                            attrs.creationTime().toMillis(),
+                            attrs.lastAccessTime().toMillis(),
+                            attrs.lastModifiedTime().toMillis(),
+                            attrs.size(),
+                            attrs.isDirectory(),
+                            attrs.isRegularFile(),
+                            attrs.isSymbolicLink(),
+                            Files.isHidden(path)));
         }
 
-        List<BasicFileInfo> list = new LinkedList<>();
-        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(dir)) {
-            for (Path path : directoryStream) {
-                if (Files.isHidden(path)) {
-                    if (showHidden) {
-                        BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
-                        list.add(
-                                new BasicFileInfo(
-                                        path.getFileName().toString(),
-                                        path.getParent().toRealPath(),
-                                        attrs.creationTime().toMillis(),
-                                        attrs.lastAccessTime().toMillis(),
-                                        attrs.lastModifiedTime().toMillis(),
-                                        attrs.size(),
-                                        attrs.isDirectory(),
-                                        attrs.isRegularFile(),
-                                        attrs.isSymbolicLink(),
-                                        true));
-                    }
-                } else {
-                    BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
-                    list.add(
-                            new BasicFileInfo(
-                                    path.getFileName().toString(),
-                                    path.getParent().toRealPath(),
-                                    attrs.creationTime().toMillis(),
-                                    attrs.lastAccessTime().toMillis(),
-                                    attrs.lastModifiedTime().toMillis(),
-                                    attrs.size(),
-                                    attrs.isDirectory(),
-                                    attrs.isRegularFile(),
-                                    attrs.isSymbolicLink(),
-                                    false));
-                }
+        return list;
+    }
+
+    public static List<Path> getDirectoryListing(Path dir, boolean showHidden) throws IOException {
+        List<Path> list = new LinkedList<>();
+
+        if (showHidden) {
+            try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(dir)) {
+                directoryStream.forEach(list::add);
+            }
+        } else {
+            try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(dir, path -> {
+                return !Files.isHidden(path);
+            })) {
+                directoryStream.forEach(list::add);
             }
         }
 

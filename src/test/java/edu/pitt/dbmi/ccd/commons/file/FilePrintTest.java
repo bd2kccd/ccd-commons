@@ -24,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -58,6 +59,7 @@ public class FilePrintTest {
      *
      * @throws IOException
      */
+    @Ignore
     @Test
     public void testFileTimestamp() throws IOException {
         System.out.println();
@@ -78,6 +80,7 @@ public class FilePrintTest {
      *
      * @throws IOException
      */
+    @Ignore
     @Test
     public void testHumanReadableSize() throws IOException {
         System.out.println();

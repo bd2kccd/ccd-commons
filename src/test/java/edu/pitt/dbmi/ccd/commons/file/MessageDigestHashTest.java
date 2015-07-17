@@ -25,6 +25,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -59,6 +60,7 @@ public class MessageDigestHashTest {
      *
      * @throws IOException
      */
+    @Ignore
     @Test
     public void testComputeMD5Hash() throws IOException {
         System.out.println("computeMD5Hash");
