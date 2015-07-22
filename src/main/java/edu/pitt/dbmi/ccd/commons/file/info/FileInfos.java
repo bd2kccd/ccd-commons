@@ -45,12 +45,23 @@ public class FileInfos {
     private FileInfos() {
     }
 
-    public static char delimiterStringToChar(String delimiter) {
+    public static char delimiterNameToChar(String delimiter) {
         switch (delimiter) {
             case "tab":
                 return '\t';
             case "comma":
                 return ',';
+            default:
+                throw new IllegalArgumentException(String.format("Unknow delimiter: %s", delimiter));
+        }
+    }
+
+    public static String delimiterNameToString(String delimiter) {
+        switch (delimiter) {
+            case "tab":
+                return "\t";
+            case "comma":
+                return ",";
             default:
                 throw new IllegalArgumentException(String.format("Unknow delimiter: %s", delimiter));
         }
