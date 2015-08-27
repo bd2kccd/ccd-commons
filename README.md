@@ -10,4 +10,4 @@ The source code is written for Java 8.
 
 ### Installation
 
-mvn clean installation
+mvn clean install
