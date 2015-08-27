@@ -7,3 +7,7 @@ The source code is written for Java 8.
 * Java 8 or above
 * Apache Maven 3.x
 * 
+
+### Installation
+
+mvn clean installation
