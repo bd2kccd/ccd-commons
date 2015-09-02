@@ -43,4 +43,58 @@ public abstract class AbstractFileTest {
         "Quisque quis sem vitae nunc egestas eleifend commodo lacinia elit. Nunc at tincidunt arcu. Quisque pharetra ex orci, ac porttitor odio consectetur fringilla. Sed eget nulla a magna pharetra tempor. Morbi gravida justo nec libero malesuada, porta rhoncus leo rutrum. Sed tempor placerat lorem, non rutrum quam suscipit sed. Etiam feugiat nisi non quam condimentum aliquam. Nulla laoreet est a sem tempus, a pharetra nunc gravida. Sed ut porttitor dolor. Proin vel porta sapien, sed eleifend tellus. Donec mauris magna, tincidunt ac turpis sed, vehicula pulvinar enim. Aenean dapibus, quam et cursus molestie, nisi massa dapibus sem, sed congue felis enim sed turpis."
     };
 
+    protected final String[] PC_STABLE_RESULT1 = {
+        "Graph Parameters:",
+        "depth = 3",
+        "alpha = 0.000100",
+        "",
+        "",
+        "Graph Nodes:",
+        "X0 X1 X2 X3 X4 X5 X6 X7 X8 X9 X10 X11 X12 X13 X14 X15 X16 X17 X18 X19 ",
+        "",
+        "Graph Edges: ",
+        "1. X1 --- X16",
+        "2. X13 --> X14",
+        "3. X15 --> X14",
+        "4. X18 --> X14",
+        "5. X18 --> X3",
+        "6. X3 <-> X17",
+        "7. X4 --- X9",
+        "8. X5 --> X17",
+        "9. X6 --- X8",
+        "10. X7 --> X2",
+        "11. X8 --> X2",
+        "12. X9 --- X19",
+        ""
+    };
+
+    protected final String[] PC_STABLE_RESULT2 = {
+        "Graph Parameters:",
+        "depth = 4",
+        "alpha = 0.050000",
+        "",
+        "",
+        "Graph Nodes:",
+        "X0 X1 X2 X3 X4 X5 X6 X7 X8 X9 X10 X11 X12 X13 X14 X15 X16 X17 X18 X19 ",
+        "",
+        "Graph Edges: ",
+        "1. X0 --- X9",
+        "2. X1 --> X16",
+        "3. X11 --> X13",
+        "4. X13 <-> X14",
+        "5. X15 --> X14",
+        "6. X18 --> X14",
+        "7. X18 --> X3",
+        "8. X3 <-> X17",
+        "9. X4 --- X9",
+        "10. X5 --> X17",
+        "11. X6 <-> X16",
+        "12. X7 --> X2",
+        "13. X8 --- X12",
+        "14. X8 --> X2",
+        "15. X8 --> X6",
+        "16. X9 --- X19",
+        ""
+    };
+
 }
