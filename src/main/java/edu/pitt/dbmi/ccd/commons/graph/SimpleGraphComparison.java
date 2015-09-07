@@ -18,14 +18,7 @@
  */
 package edu.pitt.dbmi.ccd.commons.graph;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,31 +34,45 @@ public class SimpleGraphComparison {
 
     private final Set<String> distinctEdges;
 
-    private final List<String> edgesInAll;
+    private final Set<String> edgesInAll;
 
-    private final List<String> edgesNotInAll;
+    private final Set<String> edgesNotInAll;
 
-    private final List<String> sameEndPoints;
+    private final Set<String> sameEndPoints;
 
     public SimpleGraphComparison() {
         this.distinctEdges = new HashSet<>();
-        this.edgesInAll = new LinkedList<>();
-        this.edgesNotInAll = new LinkedList<>();
-        this.sameEndPoints = new LinkedList<>();
+        this.edgesInAll = new HashSet<>();
+        this.edgesNotInAll = new HashSet<>();
+        this.sameEndPoints = new HashSet<>();
     }
 
-    public void compare(Path... paths) {
-        List<Graph> graphs = new LinkedList<>();
-        for (Path path : paths) {
-            graphs.add(readInGraph(path));
+    public void compare(List<SimpleGraph> simpleGraphs) {
+        if (simpleGraphs == null) {
+            return;
         }
+
+        Pattern delimiter = Pattern.compile(",");
+        simpleGraphs.forEach(simpleGraph -> {
+            List<String> edges = simpleGraph.getEdges();
+            edges.forEach(edge -> {
+                String[] endPoints = delimiter.split(edge);
+                if (endPoints.length == 2) {
+                    String reverseEdge = endPoints[1] + "," + endPoints[0];
+                    if (!(distinctEdges.contains(reverseEdge) || distinctEdges.contains(edge))) {
+                        distinctEdges.add(edge);
+                    }
+                }
+            });
+        });
 
         distinctEdges.forEach(edge -> {
             boolean inAll = true;
-            for (Graph graph : graphs) {
-                Map<String, String> edgeMap = graph.getEdgeMap();
+            for (SimpleGraph simpleGraph : simpleGraphs) {
+                Map<String, String> edgeMap = simpleGraph.getEdgeMap();
                 inAll = inAll && edgeMap.containsKey(edge);
             }
+
             if (inAll) {
                 edgesInAll.add(edge);
             } else {
@@ -76,8 +83,8 @@ public class SimpleGraphComparison {
         edgesInAll.forEach(edge -> {
             boolean sameEndPoint = true;
             String endpoint = null;
-            for (Graph graph : graphs) {
-                Map<String, String> edgeMap = graph.getEdgeMap();
+            for (SimpleGraph simpleGraph : simpleGraphs) {
+                Map<String, String> edgeMap = simpleGraph.getEdgeMap();
                 String edgeEndPoint = edgeMap.get(edge);
                 if (endpoint == null) {
                     endpoint = edgeEndPoint;
@@ -91,92 +98,20 @@ public class SimpleGraphComparison {
         });
     }
 
-    private Graph readInGraph(Path path) {
-        List<String> edges = new LinkedList<>();
-        Map<String, String> edgeMap = new HashMap<>();
-        try (BufferedReader reader = Files.newBufferedReader(path, Charset.defaultCharset())) {
-            Pattern space = Pattern.compile("\\s+");
-            boolean isData = false;
-            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-                line = line.trim();
-
-                if (isData) {
-                    String[] data = space.split(line);
-                    if (data.length == 4) {
-                        String endpoint = data[2];
-                        String edge1 = data[1];
-                        String edge2 = data[3];
-
-                        String forwardEdge = edge1 + "," + edge2;
-                        String reverseEdge = edge2 + "," + edge1;
-                        switch (endpoint) {
-                            case "---":
-                                edgeMap.put(forwardEdge, endpoint);
-                                edgeMap.put(reverseEdge, endpoint);
-                                break;
-                            case "<->":
-                                edgeMap.put(forwardEdge, endpoint);
-                                edgeMap.put(reverseEdge, endpoint);
-                                break;
-                            case "o-o":
-                                edgeMap.put(forwardEdge, endpoint);
-                                edgeMap.put(reverseEdge, endpoint);
-                                break;
-                            default:
-                                edgeMap.put(forwardEdge, endpoint);
-                                break;
-                        }
-                        edges.add(forwardEdge);
-
-                        if (!(distinctEdges.contains(forwardEdge) || distinctEdges.contains(reverseEdge))) {
-                            distinctEdges.add(forwardEdge);
-                        }
-                    }
-                } else if ("Graph Edges:".equals(line)) {
-                    isData = true;
-                }
-            }
-        } catch (IOException exception) {
-            exception.printStackTrace(System.err);
-        }
-
-        return new Graph(edges, edgeMap);
-    }
-
     public Set<String> getDistinctEdges() {
         return distinctEdges;
     }
 
-    public List<String> getEdgesInAll() {
+    public Set<String> getEdgesInAll() {
         return edgesInAll;
     }
 
-    public List<String> getEdgesNotInAll() {
+    public Set<String> getEdgesNotInAll() {
         return edgesNotInAll;
     }
 
-    public List<String> getSameEndPoints() {
+    public Set<String> getSameEndPoints() {
         return sameEndPoints;
     }
 
-    private class Graph {
-
-        private final List<String> edges;
-
-        private final Map<String, String> edgeMap;
-
-        public Graph(List<String> edges, Map<String, String> edgeMap) {
-            this.edges = edges;
-            this.edgeMap = edgeMap;
-        }
-
-        public List<String> getEdges() {
-            return edges;
-        }
-
-        public Map<String, String> getEdgeMap() {
-            return edgeMap;
-        }
-
-    }
 }

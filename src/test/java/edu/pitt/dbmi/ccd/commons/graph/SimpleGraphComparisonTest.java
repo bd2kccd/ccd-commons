@@ -19,11 +19,15 @@
 package edu.pitt.dbmi.ccd.commons.graph;
 
 import edu.pitt.dbmi.ccd.commons.file.AbstractFileTest;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import org.junit.Test;
@@ -47,19 +51,59 @@ public class SimpleGraphComparisonTest extends AbstractFileTest {
     @Test
     public void testCompare() throws Exception {
         Path pcstable1 = tempFolder.newFile("pcstable1.txt").toPath();
-        Files.write(pcstable1, Arrays.asList(PC_STABLE_RESULT1), StandardCharsets.UTF_8, StandardOpenOption.CREATE);
-
         Path pcstable2 = tempFolder.newFile("pcstable2.txt").toPath();
+
+        Files.write(pcstable1, Arrays.asList(PC_STABLE_RESULT1), StandardCharsets.UTF_8, StandardOpenOption.CREATE);
         Files.write(pcstable2, Arrays.asList(PC_STABLE_RESULT2), StandardCharsets.UTF_8, StandardOpenOption.CREATE);
 
-        SimpleGraphComparison graphComparison = new SimpleGraphComparison();
-        graphComparison.compare(pcstable1, pcstable2);
+        Path[] files = {pcstable1, pcstable2};
 
-        Set<String> distinctEdges = graphComparison.getDistinctEdges();
-        List<String> edgesInAll = graphComparison.getEdgesInAll();
-        List<String> edgesNotInAll = graphComparison.getEdgesNotInAll();
-        List<String> sameEndPoints = graphComparison.getSameEndPoints();
+        List<SimpleGraph> graphs = new LinkedList<>();
+        for (Path file : files) {
+            try (BufferedReader reader = Files.newBufferedReader(file, Charset.defaultCharset())) {
+                graphs.add(SimpleGraphUtil.readInSimpleGraph(reader));
+            } catch (IOException exception) {
+                exception.printStackTrace(System.err);
+            }
+        }
 
+        SimpleGraphComparison simpleGraphComparison = new SimpleGraphComparison();
+        simpleGraphComparison.compare(graphs);
+
+        Set<String> distinctEdges = simpleGraphComparison.getDistinctEdges();
+        Set<String> edgesInAll = simpleGraphComparison.getEdgesInAll();
+        Set<String> edgesNotInAll = simpleGraphComparison.getEdgesNotInAll();
+        Set<String> sameEndPoints = simpleGraphComparison.getSameEndPoints();
+
+        List<String> results = new LinkedList<>();
+        distinctEdges.forEach(edge -> {
+            StringBuilder sb = new StringBuilder(edge + " -> ");
+            if (edgesInAll.contains(edge)) {
+                sb.append(",X");
+            } else {
+                sb.append(", ");
+            }
+
+            if (edgesNotInAll.contains(edge)) {
+                sb.append(",X");
+            } else {
+                sb.append(", ");
+            }
+
+            if (sameEndPoints.contains(edge)) {
+                sb.append(",X");
+            } else {
+                sb.append(", ");
+            }
+
+            results.add(sb.toString());
+        });
+
+//        System.out.println("================================================================================");
+//        results.forEach(result -> {
+//            System.out.println(result);
+//        });
+//        System.out.println("================================================================================");
 //        System.out.println("================================================================================");
 //        System.out.println(distinctEdges);
 //        System.out.println(edgesInAll);
