@@ -89,7 +89,7 @@ public class SimpleGraphComparison {
                 if (endpoint == null) {
                     endpoint = edgeEndPoint;
                 } else {
-                    sameEndPoint = sameEndPoint && edgeEndPoint.equals(edgeEndPoint);
+                    sameEndPoint = sameEndPoint && endpoint.equals(edgeEndPoint);
                 }
             }
             if (sameEndPoint) {
