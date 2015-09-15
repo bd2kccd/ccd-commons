@@ -144,19 +144,18 @@ public class FileInfos {
 
     public static BasicFileInfo basicPathInfo(Path path) throws IOException {
         BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
-        BasicFileInfo info = new BasicFileInfo(
-                path.getFileName().toString(),
-                path.getParent().toRealPath(),
-                attrs.creationTime().toMillis(),
-                attrs.lastAccessTime().toMillis(),
-                attrs.lastModifiedTime().toMillis(),
-                attrs.size(),
-                attrs.isDirectory(),
-                attrs.isRegularFile(),
-                attrs.isSymbolicLink(),
-                Files.isHidden(path));
+        String filename = path.getFileName().toString();
+        Path absolutePath = path.getParent().toRealPath();
+        long creationTime = attrs.creationTime().toMillis();
+        long lastAccessTime = attrs.lastAccessTime().toMillis();
+        long lastModifiedTime = attrs.lastModifiedTime().toMillis();
+        long size = attrs.size();
+        boolean directory = attrs.isDirectory();
+        boolean regularFile = attrs.isRegularFile();
+        boolean symbolicLink = attrs.isSymbolicLink();
+        boolean hidden = Files.isHidden(path);
 
-        return info;
+        return new BasicFileInfo(filename, absolutePath, creationTime, lastAccessTime, lastModifiedTime, size, directory, regularFile, symbolicLink, hidden);
     }
 
     public static List<BasicFileInfo> listBasicPathInfo(List<Path> pathList) throws IOException {
@@ -164,18 +163,18 @@ public class FileInfos {
 
         for (Path path : pathList) {
             BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
-            list.add(
-                    new BasicFileInfo(
-                            path.getFileName().toString(),
-                            path.getParent().toRealPath(),
-                            attrs.creationTime().toMillis(),
-                            attrs.lastAccessTime().toMillis(),
-                            attrs.lastModifiedTime().toMillis(),
-                            attrs.size(),
-                            attrs.isDirectory(),
-                            attrs.isRegularFile(),
-                            attrs.isSymbolicLink(),
-                            Files.isHidden(path)));
+            String filename = path.getFileName().toString();
+            Path absolutePath = path.getParent().toRealPath();
+            long creationTime = attrs.creationTime().toMillis();
+            long lastAccessTime = attrs.lastAccessTime().toMillis();
+            long lastModifiedTime = attrs.lastModifiedTime().toMillis();
+            long size = attrs.size();
+            boolean directory = attrs.isDirectory();
+            boolean regularFile = attrs.isRegularFile();
+            boolean symbolicLink = attrs.isSymbolicLink();
+            boolean hidden = Files.isHidden(path);
+
+            list.add(new BasicFileInfo(filename, absolutePath, creationTime, lastAccessTime, lastModifiedTime, size, directory, regularFile, symbolicLink, hidden));
         }
 
         return list;
