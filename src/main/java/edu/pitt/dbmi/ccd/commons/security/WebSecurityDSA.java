@@ -32,6 +32,9 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  *
@@ -75,6 +78,28 @@ public class WebSecurityDSA {
         }
 
         return flag;
+    }
+
+    public static String createPlainTextSignature(String url, Map<String, String> attributeValues) {
+        Set<String> orderedKeys = new TreeSet<>(attributeValues.keySet());
+
+        StringBuilder signature = new StringBuilder(url);
+        signature.append("?");
+        orderedKeys.forEach(key -> {
+            signature.append(key);
+            signature.append("=");
+            signature.append(attributeValues.get(key));
+            signature.append("&");
+        });
+        signature.deleteCharAt(signature.length() - 1);
+
+        return signature.toString();
+    }
+
+    public static String createSignature(String url, Map<String, String> attributeValues, String privateKey) {
+        String plainText = createPlainTextSignature(url, attributeValues);
+
+        return createSignature(plainText, privateKey);
     }
 
     public static String createSignature(String message, String privateKey) {
