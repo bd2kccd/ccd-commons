@@ -42,36 +42,47 @@ public class SimpleGraphUtil {
         Map<String, String> edgeMap = simpleGraph.getEdgeMap();
         Pattern space = Pattern.compile("\\s+");
         boolean isData = false;
+        String delimiter = ";";
         for (String line = reader.readLine(); line != null; line = reader.readLine()) {
             line = line.trim();
-
             if (isData) {
-                String[] data = space.split(line);
-                if (data.length == 4) {
-                    String endpoint = data[2];
-                    String edge1 = data[1];
-                    String edge2 = data[3];
+                String[] data = space.split(line, 2);
+                if (data.length == 2) {
+                    String value = data[1].trim();
+                    String[] nodeNames = value
+                            .replaceAll("---", delimiter)
+                            .replaceAll("-->", delimiter)
+                            .replaceAll("<--", delimiter)
+                            .replaceAll("<->", delimiter)
+                            .replaceAll("o->", delimiter)
+                            .replaceAll("<-o", delimiter)
+                            .replaceAll("o-o", delimiter).split(delimiter);
+                    if (nodeNames.length == 2) {
+                        String source = nodeNames[0].trim();
+                        String target = nodeNames[1].trim();
+                        String edgeType = value.replaceAll(source, "").replaceAll(target, "").trim();
 
-                    String forwardEdge = edge1 + "," + edge2;
-                    String reverseEdge = edge2 + "," + edge1;
-                    switch (endpoint) {
-                        case "---":
-                            edgeMap.put(forwardEdge, endpoint);
-                            edgeMap.put(reverseEdge, endpoint);
-                            break;
-                        case "<->":
-                            edgeMap.put(forwardEdge, endpoint);
-                            edgeMap.put(reverseEdge, endpoint);
-                            break;
-                        case "o-o":
-                            edgeMap.put(forwardEdge, endpoint);
-                            edgeMap.put(reverseEdge, endpoint);
-                            break;
-                        default:
-                            edgeMap.put(forwardEdge, endpoint);
-                            break;
+                        String forwardEdge = source + "," + target;
+                        String reverseEdge = target + "," + source;
+                        switch (edgeType) {
+                            case "---":
+                                edgeMap.put(forwardEdge, edgeType);
+                                edgeMap.put(reverseEdge, edgeType);
+                                break;
+                            case "<->":
+                                edgeMap.put(forwardEdge, edgeType);
+                                edgeMap.put(reverseEdge, edgeType);
+                                break;
+                            case "o-o":
+                                edgeMap.put(forwardEdge, edgeType);
+                                edgeMap.put(reverseEdge, edgeType);
+                                break;
+                            default:
+                                edgeMap.put(forwardEdge, edgeType);
+                                break;
+                        }
+                        edges.add(forwardEdge);
                     }
-                    edges.add(forwardEdge);
                 }
             } else if ("Graph Edges:".equals(line)) {
                 isData = true;
