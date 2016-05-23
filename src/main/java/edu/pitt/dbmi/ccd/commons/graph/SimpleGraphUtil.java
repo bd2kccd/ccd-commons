@@ -38,29 +38,30 @@ public class SimpleGraphUtil {
     public static SimpleGraph readInSimpleGraph(BufferedReader reader) throws IOException {
         SimpleGraph simpleGraph = new SimpleGraph();
 
+        CharSequence[] edgeTypes = {
+            "---", "-->", "<--", "<->", "o->", "<-o", "o-o"
+        };
+        CharSequence emptyString = "";
+
         List<String> edges = simpleGraph.getEdges();
         Map<String, String> edgeMap = simpleGraph.getEdgeMap();
         Pattern space = Pattern.compile("\\s+");
         boolean isData = false;
-        String delimiter = ";";
+        CharSequence delimiter = ";";
         for (String line = reader.readLine(); line != null; line = reader.readLine()) {
             line = line.trim();
             if (isData) {
                 String[] data = space.split(line, 2);
                 if (data.length == 2) {
                     String value = data[1].trim();
-                    String[] nodeNames = value
-                            .replaceAll("---", delimiter)
-                            .replaceAll("-->", delimiter)
-                            .replaceAll("<--", delimiter)
-                            .replaceAll("<->", delimiter)
-                            .replaceAll("o->", delimiter)
-                            .replaceAll("<-o", delimiter)
-                            .replaceAll("o-o", delimiter).split(delimiter);
+                    for (CharSequence edgeType : edgeTypes) {
+                        value = value.replace(edgeType, delimiter);
+                    }
+                    String[] nodeNames = value.split(delimiter.toString());
                     if (nodeNames.length == 2) {
-                        String source = nodeNames[0].trim();
-                        String target = nodeNames[1].trim();
-                        String edgeType = value.replaceAll(source, "").replaceAll(target, "").trim();
+                        CharSequence source = nodeNames[0].trim();
+                        CharSequence target = nodeNames[1].trim();
+                        String edgeType = value.replace(source, emptyString).replace(target, emptyString).trim();
 
                         String forwardEdge = source + "," + target;
                         String reverseEdge = target + "," + source;
