@@ -73,7 +73,7 @@ public class SimpleGraphComparisonTest extends AbstractFileTest {
         Set<String> distinctEdges = simpleGraphComparison.getDistinctEdges();
         Set<String> edgesInAll = simpleGraphComparison.getEdgesInAll();
         Set<String> edgesNotInAll = simpleGraphComparison.getEdgesNotInAll();
-        Set<String> sameEndPoints = simpleGraphComparison.getSameEndPoints();
+        Set<String> sameEdgeTypes = simpleGraphComparison.getSameEdgeTypes();
 
         List<String> results = new LinkedList<>();
         distinctEdges.forEach(edge -> {
@@ -90,7 +90,7 @@ public class SimpleGraphComparisonTest extends AbstractFileTest {
                 sb.append(", ");
             }
 
-            if (sameEndPoints.contains(edge)) {
+            if (sameEdgeTypes.contains(edge)) {
                 sb.append(",X");
             } else {
                 sb.append(", ");

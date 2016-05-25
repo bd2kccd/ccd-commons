@@ -38,48 +38,50 @@ public class SimpleGraphUtil {
     public static SimpleGraph readInSimpleGraph(BufferedReader reader) throws IOException {
         SimpleGraph simpleGraph = new SimpleGraph();
 
-        CharSequence[] edgeTypes = {
+        String[] edgeTypes = {
             "---", "-->", "<--", "<->", "o->", "<-o", "o-o"
         };
-        CharSequence emptyString = "";
 
         List<String> edges = simpleGraph.getEdges();
         Map<String, String> edgeMap = simpleGraph.getEdgeMap();
-        Pattern space = Pattern.compile("\\s+");
         boolean isData = false;
-        CharSequence delimiter = ";";
+        Pattern space = Pattern.compile("\\s+");
         for (String line = reader.readLine(); line != null; line = reader.readLine()) {
             line = line.trim();
             if (isData) {
                 String[] data = space.split(line, 2);
                 if (data.length == 2) {
                     String value = data[1].trim();
-                    for (CharSequence edgeType : edgeTypes) {
-                        value = value.replace(edgeType, delimiter);
+
+                    String edge = "";
+                    for (String edgeType : edgeTypes) {
+                        if (value.contains(edgeType)) {
+                            edge = edgeType;
+                            break;
+                        }
                     }
-                    String[] nodeNames = value.split(delimiter.toString());
-                    if (nodeNames.length == 2) {
-                        CharSequence source = nodeNames[0].trim();
-                        CharSequence target = nodeNames[1].trim();
-                        String edgeType = value.replace(source, emptyString).replace(target, emptyString).trim();
+                    String[] values = value.split(edge);
+                    if (values.length == 2) {
+                        String source = values[0].trim();
+                        String target = values[1].trim();
 
                         String forwardEdge = source + "," + target;
                         String reverseEdge = target + "," + source;
-                        switch (edgeType) {
+                        switch (edge) {
                             case "---":
-                                edgeMap.put(forwardEdge, edgeType);
-                                edgeMap.put(reverseEdge, edgeType);
+                                edgeMap.put(forwardEdge, edge);
+                                edgeMap.put(reverseEdge, edge);
                                 break;
                             case "<->":
-                                edgeMap.put(forwardEdge, edgeType);
-                                edgeMap.put(reverseEdge, edgeType);
+                                edgeMap.put(forwardEdge, edge);
+                                edgeMap.put(reverseEdge, edge);
                                 break;
                             case "o-o":
-                                edgeMap.put(forwardEdge, edgeType);
-                                edgeMap.put(reverseEdge, edgeType);
+                                edgeMap.put(forwardEdge, edge);
+                                edgeMap.put(reverseEdge, edge);
                                 break;
                             default:
-                                edgeMap.put(forwardEdge, edgeType);
+                                edgeMap.put(forwardEdge, edge);
                                 break;
                         }
                         edges.add(forwardEdge);
